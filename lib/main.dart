@@ -20,20 +20,28 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//this my tested work.............................
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final firstName = TextEditingController();
-  final lastName = TextEditingController();
+  final fName = TextEditingController();
+  final lName = TextEditingController();
+  final uGender = TextEditingController();
   final eMail = TextEditingController();
-  final passWord = TextEditingController();
-  String fName = '';
-  String lName = '';
-  String email = '';
-  String password = '';
+  final pWord = TextEditingController();
+  final conPassword = TextEditingController();
+  final uContact = TextEditingController();
+
+  String firstName;
+  String lastName;
+  String gender = 'Male';
+  String email;
+  String password;
+  String confirmPassword;
+  String contact;
 
   @override
   Widget build(BuildContext context) {
@@ -41,54 +49,59 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Database Sign Up'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Text('Firs Name'),
-            TextField(
-              controller: firstName,
-            ),
+            TextField(controller: fName),
             Text('Last Name'),
-            TextField(
-              controller: lastName,
+            TextField(controller: lName),
+            ListTile(
+              leading: Radio(
+                value: 'Male',
+                groupValue: gender,
+                onChanged: (value) {
+                  setState(() {
+                    gender = value;
+                  });
+                },
+              ),
+              title: Text('Male'),
+            ),
+            ListTile(
+              leading: Radio(
+                value: 'Female',
+                groupValue: gender,
+                onChanged: (value) {
+                  setState(() {
+                    gender = value;
+                  });
+                },
+              ),
+              title: Text('Female'),
             ),
             Text('Email'),
-            TextField(
-              controller: eMail,
-            ),
+            TextField(controller: eMail),
             Text('Password'),
-            TextField(
-              obscureText: true,
-              controller: passWord,
-            ),
+            TextField(controller: pWord),
+            Text('Confirm Password'),
+            TextField(controller: conPassword),
+            Text('Contact Details'),
+            TextField(controller: uContact),
             FlatButton(
               color: Colors.blueAccent,
               onPressed: () {
-                signUp();
-                setState(() {
-                  fName = firstName.text;
-                  lName = lastName.text;
-                  email = eMail.text;
-                  password = passWord.text;
-                });
+                firstName = fName.text;
+                lastName = lName.text;
+                email = eMail.text;
+                password = pWord.text;
+                contact = uContact.text;
+                confirmPassword = conPassword.text;
+                password == confirmPassword
+                    ? register()
+                    : print('fill the confirm password');
               },
               child: Text('Submit'),
-            ),
-            Text(
-              fName,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Text(
-              lName,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Text(
-              email,
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Text(
-              password,
-              style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
@@ -96,17 +109,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void signUp() async {
-    String url = "http://solutionhub.com.pk/basic_app_apis/sign_up.php";
-    String json =
-        '{"FirstName":"$fName","LastName":"$lName","Email":"$email","Password":"$password"}';
-    final response = await http.post(url, body: json);
-
-    print(json);
-    int statusCode = response.statusCode;
+  void register() async {
+    String url = 'https://solutionhub.com.pk/basic_app_apis/register.php';
+    String jSon =
+        '{"uFirstName":"$firstName","uLastName":"$lastName","uEmail":"$email","uPassword":"$password","uContact":"$contact","uGender":"$gender"}';
+    var response = await http.post(url, body: jSon);
 
     if (response.statusCode == 200) {
-      print('Api hit ho gai');
+      print('it works ');
+      print(response.statusCode);
+    } else {
+      print('Something is wrong');
+      print(response.statusCode);
     }
   }
 }
